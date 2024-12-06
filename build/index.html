@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Langchain-Ollama RetrievalQA Project &mdash; Chatb Ensam  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Chatb Ensam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Langchain-Ollama RetrievalQA Project</a><ul>
+<li><a class="reference internal" href="#code-explanation">Code Explanation</a></li>
+<li><a class="reference internal" href="#project-usage">Project Usage</a></li>
+<li><a class="reference internal" href="#file-structure">File Structure</a></li>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Chatb Ensam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Langchain-Ollama RetrievalQA Project</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="langchain-ollama-retrievalqa-project">
+<h1>Langchain-Ollama RetrievalQA Project<a class="headerlink" href="#langchain-ollama-retrievalqa-project" title="Link to this heading"></a></h1>
+<p>This project demonstrates how to use Langchain with Ollama’s language models to build a Retrieval-based Question Answering (RetrievalQA) system. The code includes steps for embedding documents, storing them in a vector database, and retrieving the most relevant information to answer user queries.</p>
+<section id="code-explanation">
+<h2>Code Explanation<a class="headerlink" href="#code-explanation" title="Link to this heading"></a></h2>
+<p>The following sections break down the code into its components, explaining their purpose and usage.</p>
+<ol class="arabic">
+<li><p><strong>Importing Libraries</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">langchain_community.llms</span> <span class="kn">import</span> <span class="n">Ollama</span>
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+<span class="kn">from</span> <span class="nn">langchain_community.embeddings</span> <span class="kn">import</span> <span class="n">OllamaEmbeddings</span>
+<span class="kn">from</span> <span class="nn">langchain.document_loaders</span> <span class="kn">import</span> <span class="n">TextLoader</span>
+<span class="kn">from</span> <span class="nn">langchain.text_splitter</span> <span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+<span class="kn">from</span> <span class="nn">langchain.vectorstores</span> <span class="kn">import</span> <span class="n">Chroma</span>
+<span class="kn">from</span> <span class="nn">langchain.chains</span> <span class="kn">import</span> <span class="n">RetrievalQA</span>
+<span class="kn">from</span> <span class="nn">langchain.prompts</span> <span class="kn">import</span> <span class="n">PromptTemplate</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><cite>os</cite>: Provides functionality for interacting with the operating system.</p></li>
+<li><p><cite>langchain_community.llms</cite>: Contains integration with Ollama LLMs for inference.</p></li>
+<li><p><cite>dotenv</cite>: Loads environment variables from a <cite>.env</cite> file.</p></li>
+<li><p><cite>RecursiveCharacterTextSplitter</cite>: Splits text into smaller chunks.</p></li>
+<li><p><cite>Chroma</cite>: A vector database for storing and querying embeddings.</p></li>
+<li><p><cite>RetrievalQA</cite>: A Langchain chain for question answering with retrieval support.</p></li>
+</ul>
+</li>
+<li><p><strong>Loading Environment Variables</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">load_dotenv</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <cite>dotenv</cite> library reads key-value pairs from a <cite>.env</cite> file and loads them into the environment. This allows you to configure variables like API endpoints or secret keys outside the code.</p>
+</li>
+<li><p><strong>Initializing the LLM and Embedding Models</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">llm</span> <span class="o">=</span> <span class="n">Ollama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;mistral&quot;</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:11434&quot;</span><span class="p">)</span>
+<span class="n">embed_model</span> <span class="o">=</span> <span class="n">OllamaEmbeddings</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;mistral&quot;</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://127.0.0.1:11434&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><cite>Ollama</cite>: Initializes the language model (here, <cite>mistral</cite>) with a local server endpoint.</p></li>
+<li><p><cite>OllamaEmbeddings</cite>: Generates vector representations of text using the same model.</p></li>
+</ul>
+</li>
+<li><p><strong>Input Text for Processing</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Depuis sa création en 1997,</span>
+<span class="s2">sous les hautes directives  de  feu  Sa  Majesté le Roi Hassan II, l’Ecole Nationale Supérieure  des  Arts  et  Métiers de Meknès, première école de ce type en Afrique, a formé des in-</span>
+<span class="s2">génieurs polyvalents capables de s’intégrer et de s’implanter dans le marché du travail, grâce à une solide formation qui ne se con-tente  pas  seulement  de  la  part-</span>
+<span class="s2">ie  théorique  et  technique  mais qui  permet  le  développement</span>
+<span class="s2">et l’enrichissement du savoir-</span>
+<span class="s2">faire  et  du  savoir-être  chez  les étudiants.  De  plus,  cette  école prestigieuse offre à ses élèves-in-</span>
+<span class="s2">génieurs  plusieurs  opportunités de bénéficier de stages et de se-</span>
+<span class="s2">mestres d’études à l’étranger ou</span>
+<span class="s2">encore  de  suivre  des  formations  en double diplôme.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>This is the sample text to be processed by the RetrievalQA system. Replace this with your own document or text data.</p>
+</li>
+<li><p><strong>Splitting the Text into Chunks</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">text_splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><cite>chunk_size</cite>: Defines the maximum size of each text chunk.</p></li>
+<li><p><cite>chunk_overlap</cite>: Ensures there’s some overlap between chunks to maintain context continuity.</p></li>
+</ul>
+<p>For example, if the <cite>chunk_size</cite> is 512 characters and <cite>chunk_overlap</cite> is 128, consecutive chunks will overlap by 128 characters.</p>
+</li>
+<li><p><strong>Creating a Vector Store</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vector_store</span> <span class="o">=</span> <span class="n">Chroma</span><span class="o">.</span><span class="n">from_texts</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">embed_model</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><cite>Chroma</cite>: A vector database that stores the embeddings generated from the text chunks. It uses <cite>embed_model</cite> (OllamaEmbeddings) to generate these vectors.</p></li>
+</ul>
+</li>
+<li><p><strong>Setting up the Retriever</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">retriever</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The retriever allows querying the vector store to fetch the most relevant chunks based on similarity to the user query.</p>
+</li>
+<li><p><strong>Creating the RetrievalQA Chain</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">qa_chain</span> <span class="o">=</span> <span class="n">RetrievalQA</span><span class="o">.</span><span class="n">from_chain_type</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span> <span class="n">chain_type</span><span class="o">=</span><span class="s2">&quot;stuff&quot;</span><span class="p">,</span> <span class="n">retriever</span><span class="o">=</span><span class="n">retriever</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><cite>llm</cite>: Specifies the LLM to be used for generating answers.</p></li>
+<li><p><cite>chain_type</cite>: Specifies how the retrieved chunks will be processed. The <cite>stuff</cite> method combines all retrieved documents into a single input for the LLM.</p></li>
+<li><p><cite>retriever</cite>: Connects the vector store to the QA chain.</p></li>
+</ul>
+</li>
+<li><p><strong>Running the QA Chain</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">qa_chain</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;quand l&#39;ensam a été crée?&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The <cite>run</cite> method takes a query as input, retrieves the most relevant documents, and uses the LLM to generate an answer.</p></li>
+<li><p>In this example, the query is <em>“quand l’ensam a été crée?”</em> (When was ENSAM created?). The expected response is <em>“1997”</em>.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="project-usage">
+<h2>Project Usage<a class="headerlink" href="#project-usage" title="Link to this heading"></a></h2>
+<p>To use this project:
+1. Replace the <cite>text</cite> variable with your own document or data source.
+2. Customize the query passed to <cite>qa_chain.run()</cite> based on your needs.
+3. Ensure the Ollama server is running at the specified <cite>base_url</cite>.</p>
+</section>
+<section id="file-structure">
+<h2>File Structure<a class="headerlink" href="#file-structure" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>.
+├── main.py                # Main script containing the code
+├── .env                   # Environment variables file
+├── requirements.txt       # List of dependencies
+└── README.rst             # Project documentation
+</pre></div>
+</div>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
+<p>Add the following dependencies to <cite>requirements.txt</cite>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>langchain
+chromadb
+python-dotenv
+</pre></div>
+</div>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<p>This project is licensed under the MIT License.</p>
+</section>
+<section id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Link to this heading"></a></h2>
+<p>Special thanks to the teams behind Langchain and Ollama for their tools and APIs.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Elhassani Mohamed.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
